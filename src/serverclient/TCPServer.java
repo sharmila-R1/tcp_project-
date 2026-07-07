@@ -1,6 +1,5 @@
 package serverclient;
 
-import java.io.*;
 import java.net.*;
 
 public class TCPServer {
@@ -8,32 +7,23 @@ public class TCPServer {
     public static void main(String[] args) {
 
         try {
+
             ServerSocket serverSocket = new ServerSocket(5000);
 
             System.out.println("Server started...");
-            System.out.println("Waiting for client...");
+            System.out.println("Waiting for clients...");
 
-            Socket socket = serverSocket.accept();
+            while (true) {
 
-            System.out.println("Client connected!");
+                Socket socket = serverSocket.accept();
 
-            BufferedReader input = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+                new ClientHandler(socket).start();
 
-            PrintWriter output = new PrintWriter(
-                    socket.getOutputStream(), true);
-
-            String message = input.readLine();
-
-            System.out.println("Client: " + message);
-
-            output.println("Hello Client! Message received.");
-
-            socket.close();
-            serverSocket.close();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }
