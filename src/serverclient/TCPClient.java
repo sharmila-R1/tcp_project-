@@ -9,7 +9,7 @@ public class TCPClient {
 
         try {
 
-            Socket socket = new Socket("localhost", 5000);
+            Socket socket = new Socket("192.168.1.170", 5000);
 
             BufferedReader input = new BufferedReader(
                     new InputStreamReader(socket.getInputStream()));
