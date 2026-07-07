@@ -1,14 +1,20 @@
 package serverclient;
 
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ClientHandler extends Thread {
 
     private Socket socket;
+    private DateTimeFormatter formatter;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket,
+                         DateTimeFormatter formatter) {
+
         this.socket = socket;
+        this.formatter = formatter;
     }
 
     @Override
@@ -16,23 +22,33 @@ public class ClientHandler extends Thread {
 
         try {
 
-            System.out.println("Client Connected: " + socket.getInetAddress());
+            BufferedReader input =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    socket.getInputStream()));
 
-            BufferedReader input = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-
-            PrintWriter output = new PrintWriter(
-                    socket.getOutputStream(), true);
+            PrintWriter output =
+                    new PrintWriter(
+                            socket.getOutputStream(), true);
 
             String message = input.readLine();
 
-            System.out.println("Client: " + message);
+            System.out.println("Message Received : " + message);
 
             output.println("Hello Client! Message received.");
 
-            socket.close();
+            String disconnectTime =
+                    LocalDateTime.now().format(formatter);
 
-            System.out.println("Client disconnected.");
+            System.out.println("--------------------------------------");
+            System.out.println(" Client Disconnected");
+            System.out.println(" IP Address : "
+                    + socket.getInetAddress().getHostAddress());
+            System.out.println(" Disconnected At : "
+                    + disconnectTime);
+            System.out.println("--------------------------------------");
+
+            socket.close();
 
         } catch (Exception e) {
             e.printStackTrace();
